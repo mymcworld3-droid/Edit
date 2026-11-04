@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101211">
+  <meta name="description" content="誰讓他修仙的！角色戰績向量剪輯台。可編輯分鏡、校準本機音樂，並以 9:16 乾淨畫面錄屏。">
+  <title>誰讓他修仙的！｜戰績剪輯台</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script defer src="scenes.js"></script>
+  <script defer src="engine.js"></script>
+  <script defer src="artwork.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="app-header editor-ui">
+    <a class="wordmark" href="./" aria-label="戰績剪輯台首頁"><span class="brand-seal">仙</span><span>問道<span class="brand-light"> EDIT STUDIO</span></span></a>
+    <span class="header-description">《誰讓他修仙的！》角色戰績剪輯</span>
+    <div class="header-actions"><span class="draft-indicator" id="save-status">本機草稿</span><button class="quiet" id="help-open" title="操作說明">使用說明</button><button class="outlined" id="capture">進入錄屏 <span>↗</span></button></div>
+  </header>
+
+  <main>
+    <section class="project-heading editor-ui">
+      <div><p class="eyebrow">A CULTIVATION CHRONICLE <span>/ 001</span></p><h1>別被日常騙了<span>。</span></h1></div>
+      <div class="project-meta"><span>9:16 <i>直式作品</i></span><span id="duration-label">35.00s <i>可編輯時間軸</i></span><span>SVG <i>全向量演出</i></span></div>
+    </section>
+
+    <div class="workspace">
+      <aside class="scene-panel panel editor-ui" aria-label="分鏡清單">
+        <div class="panel-heading"><h2>分鏡</h2><span id="scene-count">20 SHOTS</span></div>
+        <div class="phase-legend"><span class="warm-dot"></span>日常 <span class="cold-dot"></span>真正戰績</div>
+        <nav id="scene-list" aria-label="逐幕預覽"></nav>
+        <div class="scene-actions"><button id="add-scene" class="quiet">＋ 新增鏡頭</button><button id="export-project" class="quiet">匯出 JSON ↗</button></div>
+        <label class="text-file-label">匯入分鏡 JSON<input id="import-project" type="file" accept="application/json,.json"></label>
+      </aside>
+
+      <section class="preview-panel" aria-label="作品預覽">
+        <div class="preview-heading editor-ui"><span><i class="live-dot"></i> LIVE PREVIEW</span><span id="preview-phase">序章 / 境界</span></div>
+        <div class="stage-holder" id="stage-holder">
+          <div class="film" id="film" aria-label="9:16 作品畫面">
+            <div id="vector-stage" aria-hidden="true"></div>
+            <div class="film-grain" aria-hidden="true"></div>
+            <div class="film-frame" aria-hidden="true"></div>
+            <div class="film-topline"><span>誰讓他修仙的！</span><span id="film-index">序 / 章</span></div>
+            <div class="film-copy" id="film-copy"><div class="film-kicker" id="film-kicker"></div><div class="film-headline" id="film-headline"></div><div class="film-subline" id="film-subline"></div><div class="film-rule"></div></div>
+            <div class="film-footer"><span id="film-footer-label">最白的烏鴉 · 原著</span><span>人物戰績錄</span></div>
+          </div>
+        </div>
+        <div class="transport editor-ui">
+          <div class="transport-left"><button id="previous" class="icon-btn" title="上一幕（←）" aria-label="上一幕">↤</button><button id="play" class="play-btn" aria-label="播放（空白鍵）">▶</button><button id="next" class="icon-btn" title="下一幕（→）" aria-label="下一幕">↦</button><button id="restart" class="icon-btn" title="從頭播放" aria-label="從頭播放">↺</button></div>
+          <label class="time-display"><input id="time-input" type="number" min="0" step="0.01" value="0.00" aria-label="跳至秒數"><span>/ <span id="total-time">35.00</span></span></label>
+          <div class="transport-right"><button id="loop" class="icon-btn" aria-label="循環播放" aria-pressed="false" title="循環播放">↻</button><button id="fullscreen" class="icon-btn" title="全螢幕" aria-label="全螢幕">⛶</button></div>
+        </div>
+        <p class="preview-note editor-ui" id="preview-note">無聲預覽 · 匯入音樂後可校準節拍</p>
+      </section>
+
+      <aside class="inspector editor-ui" aria-label="編輯面板">
+        <section class="panel shot-editor">
+          <div class="panel-heading"><h2>鏡頭設定</h2><span id="selected-number">SHOT 01</span></div>
+          <form id="scene-form">
+            <label>主字幕 <textarea id="scene-text" rows="2" maxlength="80"></textarea></label>
+            <label>補充字幕 <input id="scene-subtext" maxlength="80"></label>
+            <div class="form-row"><label>入點 / s<input id="scene-start" type="number" min="0" step="any" required></label><label>出點 / s<input id="scene-end" type="number" min="0.01" step="any" required></label></div>
+            <div class="form-row"><label>人物<select id="scene-character"><option value="">無人物</option><option value="luyang">陸陽</option><option value="huang">黃豆豆</option><option value="yunzhi">雲芝</option><option value="trio">三人同框</option></select></label><label>段落<select id="scene-phase"><option value="intro">序章</option><option value="realm">境界</option><option value="fun">荒唐日常</option><option value="break">轉折</option><option value="epic">真正戰績</option><option value="final">終章</option></select></label></div>
+            <div class="form-row effect-row"><label>視覺效果<select id="scene-effect"></select></label><label>光色<input type="color" id="scene-accent" value="#c9b486"></label></div>
+            <label class="check-label"><input id="scene-verified" type="checkbox"> 原作細節已核實</label>
+            <p class="source-note" id="source-note"></p>
+            <div class="shot-actions"><button type="submit" class="solid">套用鏡頭</button><button type="button" id="delete-scene" class="quiet">刪除</button></div>
+            <p id="scene-error" class="field-error" role="alert"></p>
+          </form>
+        </section>
+        <section class="panel audio-panel">
+          <div class="panel-heading"><h2>聲音與卡點</h2><span>LOCAL AUDIO</span></div>
+          <label class="audio-upload" id="audio-upload"><span class="audio-icon">♫</span><span><strong id="audio-name">匯入本機音樂</strong><small id="audio-status">Wannabe — why mona · 尚未載入</small></span><span>＋</span><input type="file" id="audio-file" accept="audio/*"></label>
+          <div class="form-row timing-row"><label>音樂起播 / s<input id="music-offset" type="number" step="0.1" min="0" value="0"></label><label>Drop / s<input id="drop-time" type="number" step="0.1" min="0.1" value="16"></label></div>
+          <p class="input-hint">起播：作品 0 秒對應的音檔位置。Drop 會連動縮放前後分鏡。<button id="apply-drop" class="quiet" type="button">套用 Drop ↵</button></p>
+          <div class="volume-row"><span>音量</span><input id="volume" aria-label="音量" type="range" min="0" max="1" step="0.01" value="0.75"><output id="volume-value">75%</output><button id="remove-audio" class="quiet" title="移除音樂">移除</button></div>
+        </section>
+      </aside>
+    </div>
+
+    <section class="timeline-panel panel editor-ui" aria-label="時間軸">
+      <div class="timeline-top"><h2>作品時間軸 <span>SEQUENCE 01</span></h2><div><button id="add-beat" class="quiet" title="目前時間加入節拍標記（M）">＋ 節拍</button><button id="clear-beats" class="quiet">清除標記</button><button id="reset-project" class="quiet">還原示範</button></div></div>
+      <div class="timeline-scroll"><div id="timeline" class="timeline"><div id="ruler" class="ruler"></div><canvas id="waveform" width="1800" height="60" aria-label="本機音樂波形"></canvas><div id="timeline-shots" class="timeline-shots"></div><div id="beat-markers" class="beat-markers"></div><div id="drop-marker" class="drop-marker"><span>DROP</span></div><div id="playhead" class="playhead"><span></span></div></div></div>
+      <div class="timeline-bottom"><span id="validation-status">時間軸完整</span><span>SPACE 播放 / 暫停 <i>·</i> ← → 切幕 <i>·</i> M 標拍 <i>·</i> H 錄屏</span></div>
+    </section>
+  </main>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <button id="exit-capture" class="exit-capture" aria-label="離開錄屏模式">返回編輯 <span>H / ESC</span></button>
+  <dialog id="help-dialog"><div class="dialog-heading"><span class="eyebrow">QUICK GUIDE</span><button id="help-close" class="icon-btn" aria-label="關閉說明">×</button></div><h2>把日常，剪成傳說。</h2><ol><li><strong>先預覽。</strong>空白鍵播放，左右鍵逐幕查看。點選分鏡可改字幕、時間、人物與效果。</li><li><strong>載入音樂。</strong>選擇自己持有的音檔。起播秒數決定從哪一段歌開始，Drop 是作品中高潮開始的時間。</li><li><strong>校準卡點。</strong>點時間軸跳轉，按 M 標拍；黃色 DROP 線可拖動。修改 Drop 將等比例調整前後分鏡。</li><li><strong>錄製作品。</strong>按 H 隱藏全部介面，或使用全螢幕。用系統錄屏工具錄製 9:16 畫面；空白鍵、R 重播仍可用。</li><li><strong>保存分鏡。</strong>編輯自動存在目前瀏覽器，可匯出 JSON。音檔只在本機使用，重新開啟時需再次匯入。</li></ol><p>這是含結局劇透的編輯初稿。右側可查看各幕的待查證狀態；目前沒有取得實際音檔，示範時碼尚未對拍。</p><p class="shortcuts">SPACE 播放　R 重播　← → 切幕　M 標拍　H 錄屏　ESC 返回</p></dialog>
+  <audio id="audio" preload="auto"></audio>
+</body>
+</html>
